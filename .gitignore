@@ -1,0 +1,55 @@
+# macOS
+.DS_Store
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# Streamlit and local app state
+.streamlit/
+uploads/
+tmp/
+temp/
+logs/
+*.log
+
+# Generated model/vector data
+vectorstore/
+models/
+*.faiss
+
+# Local editor settings
+.idea/
+.vscode/
+
+# OS/editor swap files
+*.swp
+*.swo
+*~
