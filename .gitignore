@@ -45,6 +45,9 @@ vectorstore/
 models/
 *.faiss
 
+# Ignore embedded sandbox repo in the legacy project folder
+gov-tech-RAG-wiki/external/govtech-sandbox-hub/
+
 # Local editor settings
 .idea/
 .vscode/

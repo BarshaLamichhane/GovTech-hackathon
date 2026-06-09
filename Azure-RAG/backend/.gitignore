@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+pip-wheel-metadata/
+uploads/
+vectorstore/
+.env
+*.log

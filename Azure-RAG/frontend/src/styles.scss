@@ -1,0 +1,123 @@
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 8px 0 24px;
+  color: var(--muted);
+}
+
+main {
+  display: grid;
+  gap: 24px;
+}
+
+.chat-form,
+.response-panel,
+.history-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.chat-form input[type='file'],
+.chat-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.chat-form textarea {
+  min-height: 140px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.file-list {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.file-list ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.chat-form button {
+  border: none;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 10px;
+  padding: 14px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.chat-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 12px;
+}
+
+.response-panel pre,
+.history-item {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.history-item {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.history-question {
+  font-weight: 600;
+}
+
+.history-answer {
+  margin-top: 8px;
+}
