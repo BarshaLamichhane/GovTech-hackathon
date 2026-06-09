@@ -10,4 +10,8 @@ python-multipart==0.0.6
 llama-cpp-python==0.3.23
 langchain-mistralai
 langchain-google-genai
+langchain-openai
+langchain-huggingface
 pypdf
+azure-identity
+azure-search-documents

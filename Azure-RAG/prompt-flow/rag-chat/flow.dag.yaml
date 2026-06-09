@@ -1,0 +1,26 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+inputs:
+  question:
+    type: string
+outputs:
+  answer:
+    type: string
+    reference: ${answer.output}
+nodes:
+  - name: retrieve
+    type: python
+    source:
+      type: code
+      path: retrieve.py
+    inputs:
+      question: ${inputs.question}
+  - name: answer
+    type: python
+    source:
+      type: code
+      path: answer.py
+    inputs:
+      question: ${inputs.question}
+      context: ${retrieve.output}
+environment:
+  python_requirements_txt: requirements.txt

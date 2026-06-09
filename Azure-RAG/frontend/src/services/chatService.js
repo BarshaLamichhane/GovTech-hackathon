@@ -1,14 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/chat'
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
 
-export async function sendChatRequest(question, files) {
-  const formData = new FormData()
-  formData.append('question', question)
-
-  files.forEach((file) => {
-    formData.append('files', file)
-  })
-
-  const response = await fetch(API_URL, {
+async function postFormData(endpoint, formData) {
+  const response = await fetch(`${API_URL}/${endpoint}`, {
     method: 'POST',
     body: formData,
   })
@@ -25,5 +18,35 @@ export async function sendChatRequest(question, files) {
     throw new Error(errorText || 'Backend request failed')
   }
 
+  return response.json()
+}
+
+export async function sendChatRequest(question, files) {
+  const formData = new FormData()
+  formData.append('question', question)
+
+  files.forEach((file) => {
+    formData.append('files', file)
+  })
+
+  return postFormData('chat', formData)
+}
+
+export async function buildKnowledgeBase(files) {
+  const formData = new FormData()
+
+  files.forEach((file) => {
+    formData.append('files', file)
+  })
+
+  return postFormData('build-knowledge-base', formData)
+}
+
+export async function getKnowledgeBaseStatus() {
+  const response = await fetch(`${API_URL}/knowledge-base/status`)
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(body || 'Could not fetch knowledge base status')
+  }
   return response.json()
 }

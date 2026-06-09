@@ -1,0 +1,4 @@
+azure-identity
+azure-search-documents
+openai
+promptflow
