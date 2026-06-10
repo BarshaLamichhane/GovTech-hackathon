@@ -1,0 +1,8 @@
+fastapi
+httpx
+numpy
+pydantic
+pypdf
+pytest
+python-multipart
+uvicorn[standard]

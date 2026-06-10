@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn Model-Powered RAG</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="../../options/index.html">← Learning options</a>
+        <a href="../../scratch/frontend/index.html">Switch to scratch lab →</a>
+      </nav>
+      <span>Model-powered lab</span>
+      <h1>Inside Hugging Face embeddings and FAISS</h1>
+      <p>This lab uses the same local embedding model and FAISS approach as your Azure-RAG project.</p>
+    </header>
+
+    <main>
+      <section class="callout">
+        <strong>Important:</strong>
+        Hugging Face creates semantic vectors. FAISS stores and searches vectors. LangChain separately stores chunk text, metadata, and the mapping back to FAISS positions.
+      </section>
+
+      <section class="panel">
+        <div class="heading"><b>1</b><div><h2>Index a document with the real model</h2><p>Chunking here uses character counts, matching your Azure-RAG splitter.</p></div></div>
+        <div class="input-options">
+          <article><strong>Option 1: Default example</strong><p>Restore the included teaching text.</p><button id="defaultTextButton" type="button" class="secondary">Use default text</button></article>
+          <article><strong>Option 2: Copy and paste</strong><p>Paste or type directly in the editable document area.</p></article>
+          <article><strong>Option 3: Upload PDFs</strong><p>Choose one or more PDFs and combine their selectable text before indexing.</p><input id="pdfFiles" type="file" accept="application/pdf,.pdf" multiple /><button id="uploadPdfButton" type="button" class="secondary">Extract selected PDFs</button></article>
+        </div>
+        <div id="sourceStatus" class="source-status">Current source: default example text</div>
+        <div id="pdfSummary" class="pdf-summary hidden"></div>
+        <label>Editable document text
+          <textarea id="document" rows="9">Solar panels transform sunlight into electricity. They are most productive during bright daylight. Batteries preserve extra solar energy for use at night.
+
+Wind turbines convert moving air into electricity. Wind and solar power are renewable energy sources.
+
+Retrieval augmented generation splits documents into chunks. A sentence-transformer encoder creates semantic embeddings. FAISS stores and searches the vectors. LangChain keeps the original text and metadata so retrieved vectors can be turned back into readable context.</textarea>
+        </label>
+        <div class="lifecycle">
+          <h3>Choose what to do with the vector database</h3>
+          <div class="operation-options">
+            <label><input type="radio" name="indexOperation" value="use_existing" /><span><strong>Use existing</strong>Load saved vectors without chunking or embedding again.</span></label>
+            <label><input type="radio" name="indexOperation" value="recreate" checked /><span><strong>Recreate</strong>Delete the saved index and rebuild every supplied document.</span></label>
+            <label><input type="radio" name="indexOperation" value="update" /><span><strong>Update existing</strong>Hash documents, skip duplicates, and index only new or changed documents.</span></label>
+          </div>
+          <div id="recommendation" class="recommendation">Checking the saved vector database...</div>
+          <div id="registry" class="registry"></div>
+        </div>
+        <div class="controls">
+          <label>Chunk size in characters <input id="chunkSize" type="number" value="220" min="50" /></label>
+          <label>Overlap in characters <input id="chunkOverlap" type="number" value="40" min="0" /></label>
+          <button id="indexButton">Run selected indexing operation</button>
+        </div>
+        <p id="indexError" class="error"></p>
+      </section>
+
+      <section id="indexResults" class="hidden">
+        <section class="panel">
+          <div class="heading"><b>2</b><div><h2>Model and indexing steps</h2><p>These are the hidden operations behind one indexing call.</p></div></div>
+          <div id="modelSummary" class="stats"></div>
+          <div id="indexingSteps" class="pipeline"></div>
+        </section>
+
+        <section class="panel">
+          <div class="heading"><b>3</b><div><h2>Recursive chunking steps</h2><p>See how the original document becomes overlapping character-based chunks before embedding.</p></div></div>
+          <div id="splitterSummary" class="stats"></div>
+          <div class="split-explanation">
+            <h3>Separators tried in order</h3>
+            <div id="separators" class="separators"></div>
+            <p id="splitterExplanation"></p>
+          </div>
+          <div id="chunkingRecords" class="chunking-records"></div>
+        </section>
+
+        <section class="panel">
+          <div class="heading"><b>4</b><div><h2>Chunk tokens and semantic embeddings</h2><p>Tokens are model inputs. The final sentence embedding is a 384-number semantic representation, not a word-count vector.</p></div></div>
+          <div id="records" class="records"></div>
+        </section>
+
+        <section class="panel">
+          <div class="heading"><b>5</b><div><h2>What FAISS and LangChain store</h2><p>The persisted local database uses two FAISS/LangChain files and one document registry.</p></div></div>
+          <div id="files" class="file-grid"></div>
+          <h3>FAISS position → LangChain document mapping</h3>
+          <div class="table-wrap"><table><thead><tr><th>FAISS position</th><th>Document ID</th><th>Metadata</th><th>Text</th></tr></thead><tbody id="mapping"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="panel">
+        <div class="heading"><b>6</b><div><h2>Embed a question and search FAISS</h2><p>Try a paraphrase whose exact words do not appear in the document.</p></div></div>
+        <div class="search-controls">
+          <label>Question <input id="question" value="How can energy be kept until nighttime?" /></label>
+          <label>Top K <input id="topK" type="number" value="3" min="1" max="10" /></label>
+          <label>Maximum L2 distance <input id="maximumDistance" type="number" value="1.2" min="0" max="4" step="0.1" /></label>
+          <button id="searchButton">Embed question and retrieve</button>
+        </div>
+        <p id="searchError" class="error"></p>
+      </section>
+
+      <section id="searchResults" class="panel hidden">
+        <div class="heading"><b>7</b><div><h2>Question encoder and FAISS retrieval</h2><p>Lower L2 distance means vectors are closer in semantic space.</p></div></div>
+        <div id="querySummary" class="stats"></div>
+        <h3>Question tokens</h3>
+        <div id="queryTokens" class="tokens"></div>
+        <h3>Retrieval steps</h3>
+        <div id="retrievalSteps" class="pipeline"></div>
+        <h3>Nearest FAISS vectors and relevance decision</h3>
+        <div id="retrievalDecision" class="decision"></div>
+        <div id="results" class="results"></div>
+        <div class="context"><h3>Context that would be sent to Gemini or another LLM</h3><pre id="context"></pre></div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

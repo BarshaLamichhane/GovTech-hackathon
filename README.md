@@ -4,6 +4,7 @@ This repository is now split into two main folders:
 
 - `gov-tech-RAG-wiki/` — contains the existing GovTech RAG/Wiki prototype and legacy app logic.
 - `Azure-RAG/` — contains the new React frontend and backend for a PDF-based Azure RAG chatbot.
+- `learning/` — contains a minimal interactive project for understanding chunking, embeddings, vector stores, and retrieval.
 
 ## How to use
 

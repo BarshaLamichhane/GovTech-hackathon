@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn RAG Step by Step</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="lab-nav" aria-label="Learning lab navigation">
+        <a href="../../options/index.html">All learning options</a>
+        <a href="../../model-powered/frontend/index.html">Switch to model-powered lab →</a>
+      </nav>
+      <span class="eyebrow">Interactive learning project</span>
+      <h1>See how RAG works</h1>
+      <p>Explore chunking, embeddings, vector storage, similarity search, and retrieved context without hidden frameworks.</p>
+    </header>
+
+    <main>
+      <section class="concept-strip">
+        <div><strong>1. Chunk</strong><span>Split a document</span></div>
+        <div><strong>2. Embed</strong><span>Turn text into numbers</span></div>
+        <div><strong>3. Store</strong><span>Keep vectors with text</span></div>
+        <div><strong>4. Retrieve</strong><span>Find similar chunks</span></div>
+        <div><strong>5. Answer</strong><span>Give context to an LLM</span></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <span class="step">Step 1</span>
+          <div>
+            <h2>Chunk and index a document</h2>
+            <p>Change the settings and notice how overlap repeats words between neighboring chunks.</p>
+          </div>
+        </div>
+
+        <div class="input-options">
+          <article>
+            <strong>Option 1: Default example</strong>
+            <p>Restore the included teaching text.</p>
+            <button id="defaultTextButton" type="button" class="secondary-button">Use default text</button>
+          </article>
+          <article>
+            <strong>Option 2: Copy and paste</strong>
+            <p>Paste or type directly in the editable text area below.</p>
+          </article>
+          <article>
+            <strong>Option 3: Upload PDFs</strong>
+            <p>Choose one or more PDFs, combine their text, then inspect or edit it below.</p>
+            <input id="pdfFiles" type="file" accept="application/pdf,.pdf" multiple />
+            <button id="uploadPdfButton" type="button" class="secondary-button">Extract selected PDFs</button>
+          </article>
+        </div>
+        <div id="sourceStatus" class="source-status">Current source: default example text</div>
+        <div id="pdfSummary" class="pdf-summary hidden"></div>
+
+        <label>
+          Editable document text
+          <textarea id="documentText" rows="9">Solar energy converts sunlight into electricity using photovoltaic panels. Solar panels produce the most electricity during bright daylight. Batteries store extra solar electricity so it can be used at night.
+
+Wind turbines convert moving air into electricity. Wind energy works best in locations with reliable wind. Solar and wind are renewable energy sources because they naturally replenish.
+
+A retrieval augmented generation system first splits documents into chunks. It converts each chunk into an embedding vector and stores the vectors. When a user asks a question, the system retrieves similar chunks and sends them to a language model as context.</textarea>
+        </label>
+
+        <div class="controls">
+          <label>Chunk size <input id="chunkSize" type="number" min="5" max="200" value="35" /></label>
+          <label>Chunk overlap <input id="chunkOverlap" type="number" min="0" max="100" value="5" /></label>
+          <button id="indexButton">Create chunks and embeddings</button>
+        </div>
+        <p id="indexError" class="error"></p>
+      </section>
+
+      <section id="indexResults" class="panel hidden">
+        <div class="section-heading">
+          <span class="step">Step 1 detail</span>
+          <div>
+            <h2>Inspect chunk boundaries and overlap</h2>
+            <p>Each card shows where the chunk starts and ends in the original document.</p>
+          </div>
+        </div>
+        <div id="chunkSummary" class="summary-grid"></div>
+        <div id="chunks" class="card-grid"></div>
+
+        <div class="subsection">
+          <h3>Indexing pipeline</h3>
+          <p class="muted">Indexing prepares document chunks before any question is asked.</p>
+          <div id="indexingSteps" class="pipeline"></div>
+        </div>
+
+        <div class="subsection">
+          <h3>Embedding dimensions</h3>
+          <p class="muted">Every chunk uses this exact shared vocabulary order.</p>
+        </div>
+        <details>
+          <summary>Vocabulary and vector dimensions</summary>
+          <div id="vocabulary" class="token-list"></div>
+        </details>
+
+        <div class="subsection">
+          <h3>Vector store contents</h3>
+          <p class="muted">A vector store keeps an ID, metadata, original text, and embedding vector together.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Metadata</th><th>Text</th><th>Vector</th></tr>
+              </thead>
+              <tbody id="vectorStore"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <span class="step">Step 4</span>
+          <div>
+            <h2>Ask a question and retrieve chunks</h2>
+            <p>The same embedding method converts your question into a vector, then cosine similarity ranks every chunk.</p>
+          </div>
+        </div>
+        <div class="question-row">
+          <label>Question <input id="question" value="How does RAG answer a question?" /></label>
+          <label>Top chunks <input id="topK" type="number" min="1" max="10" value="3" /></label>
+          <label>Minimum similarity <input id="minimumSimilarity" type="number" min="0" max="1" step="0.05" value="0.2" /></label>
+          <button id="searchButton">Retrieve context</button>
+        </div>
+        <p id="searchError" class="error"></p>
+      </section>
+
+      <section id="searchResults" class="panel hidden">
+        <div class="section-heading">
+          <span class="step">Steps 4-5</span>
+          <div>
+            <h2>Inspect question embedding and retrieval</h2>
+            <p>The question must become a vector in exactly the same coordinate system as the chunks.</p>
+          </div>
+        </div>
+
+        <h3>Question embedding steps</h3>
+        <div id="questionSteps" class="pipeline"></div>
+        <div id="questionSummary" class="summary-grid"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Dimension</th><th>Vocabulary word</th><th>Raw count</th><th>Normalized value</th></tr>
+            </thead>
+            <tbody id="questionEmbedding"></tbody>
+          </table>
+        </div>
+
+        <h3>Cosine similarity calculation</h3>
+        <p class="formula">similarity = dot(question vector, chunk vector) / (|question| × |chunk|)</p>
+        <div id="scores" class="scores"></div>
+
+        <div id="retrievalDecision" class="decision"></div>
+
+        <h3>Accepted relevant chunks</h3>
+        <div id="retrieved" class="card-grid"></div>
+
+        <div class="context-box">
+          <h3>Context sent to an LLM</h3>
+          <pre id="context"></pre>
+        </div>
+
+        <div class="answer-box">
+          <h3>Simple extractive answer</h3>
+          <p id="answer"></p>
+          <small>This demo selects a sentence instead of calling an LLM, keeping retrieval easy to inspect.</small>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
